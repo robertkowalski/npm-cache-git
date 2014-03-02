@@ -86,8 +86,14 @@ function prepareGitRepo (cb) {
     , "just a test with git", 'utf8')
 
   var childInit = spawn("git", ["init"], opts)
-  var childAdd, childCommit
+    , childAdd, childCommit
   childInit.on("close", function () {
+    if (process.env.CI)
+      setGitUser()
+    else
+      next()
+  })
+  function next () {
     childAdd = spawn("git", ["add", "."], opts)
     childAdd.on("close", function () {
       childCommit = spawn("git"
@@ -96,5 +102,19 @@ function prepareGitRepo (cb) {
         cb()
       })
     })
-  })
+  }
+
+  function setGitUser () {
+    var c = spawn("git", ['config', 'user.email'
+      , '"you@example.com"'], opts)
+    c.on("close", function (er) {
+      if (er) throw er
+      var c = spawn("git", ['config', 'user.name'
+        , '"Your name"'], opts)
+      c.on("close", function (er) {
+        if (er) throw er
+        next()
+      })
+    })
+  }
 }
