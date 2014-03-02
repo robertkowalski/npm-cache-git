@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/robertkowalski/npm-cache-git.png?branch=master)](https://travis-ci.org/robertkowalski/npm-cache-git)
+
 # npm-cache-git
 
 Most of the git parts of cache.js
